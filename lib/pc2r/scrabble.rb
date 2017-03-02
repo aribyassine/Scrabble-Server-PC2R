@@ -16,7 +16,6 @@ module Pc2r
     end
 
     def self.dictuonary
-      puts dict.length
       if dict.empty?
         File.open('./../assets/words.txt') do |file|
           file.each do |line|
@@ -29,7 +28,7 @@ module Pc2r
 
     def self.score (word='')
       if word.respond_to? :to_s
-        word.downcase.chars.map { |letter| letter_values[letter] }.compact.reduce(:+) || 0
+        word.to_ascii.downcase.chars.map { |letter| letter_values[letter] }.compact.reduce(:+) || 0
       end
     end
 

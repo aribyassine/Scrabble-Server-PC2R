@@ -12,7 +12,7 @@ class String
   end
 
   def exist_in_dictuonary?
-    Pc2r::Scrabble.dictuonary.include? self.downcase.chomp.to_ascii
+    Pc2r::Scrabble.dictuonary.include? self.chomp.downcase.to_ascii
   end
 end
 
