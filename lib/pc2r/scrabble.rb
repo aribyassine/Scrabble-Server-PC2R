@@ -1,5 +1,7 @@
+require 'unidecoder'
+
 module Pc2r
-  class Scrabble
+  module Scrabble
     LETTER_VALUES = {
         %w(e a i n o r s t u l) => 1,
         %w(d m g) => 2,
@@ -9,22 +11,29 @@ module Pc2r
         %w(k w x y z) => 10
     }
 
-    def initialize(word)
+    def self.dict
+      @dict ||= Set.new
+    end
+
+    def self.dictuonary
+      puts dict.length
+      if dict.empty?
+        File.open('./../assets/words.txt') do |file|
+          file.each do |line|
+            dict << line.chomp
+          end
+        end
+      end
+      dict
+    end
+
+    def self.score (word='')
       if word.respond_to? :to_s
-      then
-        @word = word.to_s.downcase.gsub(/[^a-z]/, '')
-      else
-        @word = ''
+        word.downcase.chars.map { |letter| letter_values[letter] }.compact.reduce(:+) || 0
       end
     end
 
-    def score
-      @word.chars.map { |letter| letter_values[letter] }.compact.reduce(:+) || 0
-    end
-
-    private
-
-    def letter_values
+    def self.letter_values
       Hash[*LETTER_VALUES.map do |letters, value|
         letters.map { |letter| [letter, value] }
       end.flatten]
