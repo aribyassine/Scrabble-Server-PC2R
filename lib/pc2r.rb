@@ -1,7 +1,6 @@
 require 'thread'
 require 'socket'
 require 'concurrent/array'
-require 'matrix'
 
 require_relative 'pc2r/scrabble'
 require_relative 'pc2r/string'
@@ -16,7 +15,7 @@ module Pc2r
   loop do
     clients << c = server.accept
     threads << Thread.start(c) do |client|
-      input = client.gets.chomp.to_s.force_encoding('UTF-8')
+      input = client.gets.chomp.force_encoding('UTF-8')
       client.puts(Scrabble.score input)
       client.puts(input.exist_in_dictuonary?)
       client.close

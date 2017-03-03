@@ -28,7 +28,7 @@ module Pc2r
 
     def self.score (word='')
       if word.respond_to? :to_s
-        word.to_ascii.downcase.chars.map { |letter| letter_values[letter] }.compact.reduce(:+) || 0
+        word.to_s.to_ascii.downcase.chars.map { |letter| letter_values[letter] }.compact.reduce(:+) || 0
       end
     end
 
