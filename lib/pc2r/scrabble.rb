@@ -17,7 +17,7 @@ module Pc2r
 
     def self.dictuonary
       if dict.empty?
-        File.open('./../assets/words.txt') do |file|
+        File.open('./../assets/ods.txt') do |file|
           file.each do |line|
             dict << line.chomp
           end

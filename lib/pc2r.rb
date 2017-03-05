@@ -1,26 +1,17 @@
 require 'thread'
 require 'socket'
-require 'concurrent/array'
 
-require_relative 'pc2r/scrabble'
-require_relative 'pc2r/string'
+require_relative 'pc2r/router'
 
 module Pc2r
 
   Thread.abort_on_exception = true
   server = TCPServer.new (2000)
-  clients = Concurrent::Array.new
-  threads = Concurrent::Array.new
 
   loop do
-    clients << c = server.accept
-    threads << Thread.start(c) do |client|
-      input = client.gets.chomp.force_encoding('UTF-8')
-      client.puts(Scrabble.score input)
-      client.puts(input.exist_in_dictuonary?)
-      client.close
-      clients.delete(client)
-      threads.delete(Thread.current)
+    c = server.accept
+    Thread.start(c) do |client|
+      Router::process client
     end
   end
 end
