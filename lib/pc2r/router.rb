@@ -1,26 +1,21 @@
-require_relative 'player'
+require_relative 'controller'
 
 module Pc2r
   module Router
 
+    # @param client [TCPSocket]
     def self.process(client)
+      controller = Controller.new(client)
       loop do
         request = client.gets.chomp.force_encoding('UTF-8').to_s
         #CONNEXION
         if /^CONNEXION\/[a-zA-Z]+\/$/ =~ request
           user = request.split('/').last
-          connexion(user, client)
+          controller.connexion(user)
         end
-        puts Player.find('ghiles').inspect
       end
     end
 
-    def self.connexion(user, client)
-      if Player.exist? user
-        client.puts 'REFUS/'
-      else
-        Player.new(client, user)
-      end
-    end
+
   end
 end
