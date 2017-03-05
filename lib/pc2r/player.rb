@@ -14,6 +14,15 @@ module Pc2r
       @@players << self
     end
 
+    # @param msg [String]
+    def broadcast(msg)
+      @@players.each { |player| player.puts msg unless player == self }
+    end
+
+    def puts (obj='', *arg)
+      @client.puts(obj, arg)
+    end
+
     class << self
 
       # @return [Array]
