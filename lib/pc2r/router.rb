@@ -12,10 +12,11 @@ module Pc2r
         if /^CONNEXION\/[a-zA-Z]+\/$/ =~ request
           user = request.split('/').last
           controller.connexion(user)
+        elsif /^SORT\/[a-zA-Z]+\/$/ =~ request
+
         end
       end
     end
-
 
   end
 end
