@@ -27,6 +27,21 @@ module Pc2r
       end
     end
 
+    # @param msg [String]
+    def envoi(msg)
+      @player.broadcast "RECEPTION/#{msg}"
+    end
+
+    # @param user [String]
+    # @param msg [String]
+    def penvoi(user,msg)
+      dst = Player.find(user)
+      src = @player.name
+      if dst
+        dst.puts "PRECEPTION/#{msg}/#{src}"
+      end
+    end
+
     def authenticated?
       !@player.nil?
     end
