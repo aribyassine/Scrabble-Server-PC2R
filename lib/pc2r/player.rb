@@ -23,6 +23,11 @@ module Pc2r
       @client.puts(obj, arg)
     end
 
+    def destroy
+      @@players.delete self
+      @client.close
+    end
+
     class << self
 
       # @return [Array]
