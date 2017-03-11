@@ -8,10 +8,10 @@ module Pc2r
       controller = Controller.new(client)
 
       loop do
-        request = client.gets.chomp.force_encoding('UTF-8').to_s
+        request = client.gets || break
+        request = request.chomp.force_encoding('UTF-8').to_s
         begin
-          route  = parse(request)
-          params = request.match(@regexp[route]).captures
+          route, params = parse(request)
           puts "route : '#{route.inspect}'  => params : #{params}"
         rescue Exception => e
           puts e.message
@@ -39,18 +39,19 @@ module Pc2r
 
     private
     @user = '[a-zA-Z]+'
-    @msg  = '.+'
+    @msg = '.+'
 
     @regexp = {
         :connexion => /^CONNEXION\/(#{@user})\/$/,
-        :sort      => /^SORT\/(#{@user})\/$/,
-        :envoi     => /^ENVOI\/(#{@msg})\/$/,
-        :penvoi    => /^PENVOI\/(#{@user})\/(#{@msg})\/$/,
+        :sort => /^SORT\/(#{@user})\/$/,
+        :envoi => /^ENVOI\/(#{@msg})\/$/,
+        :penvoi => /^PENVOI\/(#{@user})\/(#{@msg})\/$/,
     }
 
     def self.parse(request)
       found = @regexp.find { |k, v| v =~ request }
-      found.first unless found.nil?
+      found = found.first if found
+      return [found, request.match(@regexp[found]).captures] if found
     end
 
   end

@@ -23,7 +23,7 @@ module Pc2r
       if @player.name == user
         @player.broadcast "DECONNEXION/#{user}/"
         @player.destroy
-        Thread.current.exit
+        Thread.current.kill
       end
     end
 

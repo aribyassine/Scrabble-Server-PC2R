@@ -1,17 +1,6 @@
-require 'thread'
-require 'socket'
-
-require_relative 'pc2r/router'
-
+require_relative 'pc2r/scrabble_server'
 module Pc2r
-
-  Thread.abort_on_exception = true
-  server = TCPServer.new (2000)
-
-  loop do
-    c = server.accept
-    Thread.start(c) do |client|
-      Router::process client
-    end
-  end
+    Thread.abort_on_exception = true
+    ScrabbleServer.new 2000
 end
+
