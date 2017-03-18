@@ -10,7 +10,6 @@ module Pc2r
       puts "*** Starting scrabble server on port : #{port}"
       @server = TCPServer.new (port)
       @threads = []
-      run
     end
 
     def shutdown
@@ -20,7 +19,7 @@ module Pc2r
     def run
       loop do
         @threads << Thread.start(@server.accept) do |client|
-          Router::process client
+          Router.new(client).process
         end
       end
     end

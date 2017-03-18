@@ -16,6 +16,7 @@ module Pc2r
         @player.puts "BIENVENUE/#{user}/"
         @player.broadcast "CONNECTE/#{user}/"
       end
+      @player
     end
 
     # @param user [String]
@@ -23,7 +24,6 @@ module Pc2r
       if @player.name == user
         @player.broadcast "DECONNEXION/#{user}/"
         @player.destroy
-        Thread.current.kill
       end
     end
 
@@ -40,10 +40,6 @@ module Pc2r
       if dst
         dst.puts "PRECEPTION/#{msg}/#{src}"
       end
-    end
-
-    def authenticated?
-      !@player.nil?
     end
 
   end

@@ -26,6 +26,11 @@ module Pc2r
     def destroy
       @@players.delete self
       @client.close
+      Thread.current.kill
+    end
+
+    def alone?
+      @@players.count == 1 && @@players.include?(self)
     end
 
     class << self
