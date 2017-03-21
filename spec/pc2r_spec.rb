@@ -20,6 +20,18 @@ RSpec.describe Pc2r do
     expect(s1.gets.chomp).to eq('CONNECTE/b/')
   end
 
+  it 'should send public message' do
+    msg = 'hello'
+    s1.puts "ENVOI/#{msg}/"
+    expect(s2.gets.chomp).to eq("RECEPTION/#{msg}/")
+  end
+
+  it 'should send private message' do
+    msg = 'hello'
+    s1.puts "PENVOI/b/#{msg}/"
+    expect(s2.gets.chomp).to eq("PRECEPTION/#{msg}/a/")
+  end
+
   it 'should disconnect' do
     s1.puts 'SORT/a/'
     expect(s1.gets).to be nil
@@ -29,4 +41,5 @@ RSpec.describe Pc2r do
     expect(s2.gets).to be nil
     s2.close
   end
+
 end

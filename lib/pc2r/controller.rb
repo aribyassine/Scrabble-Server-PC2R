@@ -29,7 +29,7 @@ module Pc2r
 
     # @param msg [String]
     def envoi(msg)
-      @player.broadcast "RECEPTION/#{msg}"
+      @player.broadcast "RECEPTION/#{msg}/"
     end
 
     # @param user [String]
@@ -38,7 +38,7 @@ module Pc2r
       dst = Player.find(user)
       src = @player.name
       if dst
-        dst.puts "PRECEPTION/#{msg}/#{src}"
+        dst.puts "PRECEPTION/#{msg}/#{src}/"
       end
     end
 
