@@ -6,7 +6,6 @@ module Pc2r
     EMPTY_CHAR = '0'
 
     def initialize(grid_size = 15)
-      # TODO copy immutable matrix
       @grid_size = grid_size
       #@rows = Array.new(@grid_size) { Array.new(@grid_size) { EMPTY_CHAR } }
       @matrix = Matrix.build(@grid_size) { EMPTY_CHAR }
@@ -16,11 +15,12 @@ module Pc2r
     # @param placement [String]
     def set!(placement)
       if (mot = valid?(placement))
-        puts mot.join.delete(EMPTY_CHAR) if mot.respond_to? :join
+        raise "le mot #{mot} n'est pas dans le dictionnaire" unless mot.exist_in_dictuonary?
         @matrix = to_matrix placement
         @empty = false
+        mot
       else
-        raise 'disposition des lettres invalide: espace entre les lettres'
+        raise 'disposition des lettres invalide'
       end
     end
 
@@ -31,7 +31,7 @@ module Pc2r
       @matrix.each_with_index do |elem, row, column|
         io.putc('|') if column == 0
         io.putc ((elem == EMPTY_CHAR) ? ' ' : elem)
-        io.putc('|') if column == @grid_size-1
+        io.puts('|') if column == @grid_size-1
       end
       io.puts '+' + ('-' * @grid_size) + '+'
       io.string
@@ -40,10 +40,9 @@ module Pc2r
     private
     # @param placement [String]
     def valid?(placement)
+      # TODO refactor plusbesoin de mot
       old, new, range, indexes = stat(to_matrix placement).values
-      #return new[range].all? { |letter| letter != EMPTY_CHAR } if @empty
       mot = extract_word(old, new, range)
-      pp old, new, range, indexes,mot.join
       if range.to_a == indexes
         dif = false
         (0 ... @grid_size).each { |i|
@@ -53,7 +52,7 @@ module Pc2r
         }
         @empty ? mot : dif
       else
-        mot[range].include?(EMPTY_CHAR) ? false : mot
+        new[range].include?(EMPTY_CHAR) ? false : mot
       end
     end
 
@@ -63,10 +62,10 @@ module Pc2r
     # @return [String]
     def extract_word(old, new, range)
       mot = Array.new(@grid_size) { EMPTY_CHAR }
-      (range.begin-1 .. 0).each { |i| old[i]!=EMPTY_CHAR ? mot[i] = old[i] : break }
-      (range.last+1 .. @grid_size).each { |i| old[i]!=EMPTY_CHAR ? mot[i] = old[i] : break }
+      (range.begin-1).downto(0) { |i| old[i]!=EMPTY_CHAR ? mot[i] = old[i] : break}
+      (range.last+1 ... @grid_size).each { |i| old[i]!=EMPTY_CHAR ? mot[i] = old[i] : break }
       range.each { |i| mot[i] = new[i] }
-      mot
+      mot.join.delete EMPTY_CHAR
     end
 
     # @param matrix [Matrix]
