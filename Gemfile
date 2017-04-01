@@ -4,5 +4,6 @@ source 'https://rubygems.org'
 gem 'unidecoder', '~> 1.1', '>= 1.1.2'
 gem 'timers'
 gem 'concurrent-ruby', require: 'concurrent'
+gem 'configatron'
 
 gemspec

@@ -1,6 +1,7 @@
 require 'net/http'
 require 'json'
 require 'unidecoder'
+require 'configatron'
 
 class String
   LETTER_VALUES = {
@@ -11,8 +12,6 @@ class String
       %w(J Q) => 8,
       %w(K W X Y Z) => 10
   }
-
-  DICT_FILE = './../assets/ods.txt'
 
   def exist_in_wiktionary?
     url = "https://fr.wiktionary.org/w/api.php?action=query&titles=#{self.downcase}&format=json"
@@ -41,7 +40,7 @@ private
   # @return [Set]
   def self.dictuonary
     if dict.empty?
-      File.open(DICT_FILE) do |file|
+      File.open(configatron.dictuonary) do |file|
         file.each do |line|
           dict << line.chomp
         end

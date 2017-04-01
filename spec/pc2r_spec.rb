@@ -1,7 +1,11 @@
 require 'spec_helper'
 require 'socket'
+require_relative '../lib/pc2r/scrabble_server'
+require_relative '../lib/pc2r/string'
 
 RSpec.describe Pc2r do
+
+  Thread.new { Pc2r::ScrabbleServer.new(2000).run }
 
   s1 = TCPSocket.new('localhost', 2000)
   s2 = TCPSocket.new('localhost', 2000)

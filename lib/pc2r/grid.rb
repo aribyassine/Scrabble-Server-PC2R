@@ -14,11 +14,11 @@ module Pc2r
 
     # @param placement [String]
     def set!(placement)
-      if (mot = valid?(placement))
-        raise "le mot #{mot} n'est pas dans le dictionnaire" unless mot.exist_in_dictuonary?
+      if (word = valid?(placement))
+        raise "le mot <#{word}> n'est pas dans le dictionnaire" unless word.exist_in_dictuonary?
         @matrix = to_matrix placement
         @empty = false
-        mot
+        word
       else
         raise 'disposition des lettres invalide'
       end
@@ -41,18 +41,18 @@ module Pc2r
     # @param placement [String]
     def valid?(placement)
       # TODO refactor plusbesoin de mot
-      old, new, range, indexes = stat(to_matrix placement).values
-      mot = extract_word(old, new, range)
+      old, new, range, indexes = stat(to_matrix placement)
+      word = extract_word(old, new, range)
       if range.to_a == indexes
         dif = false
         (0 ... @grid_size).each { |i|
           unless indexes.include? i
-            dif = mot if old[i] != EMPTY_CHAR
+            dif = word if old[i] != EMPTY_CHAR
           end
         }
-        @empty ? mot : dif
+        @empty ? word : dif
       else
-        new[range].include?(EMPTY_CHAR) ? false : mot
+        new[range].include?(EMPTY_CHAR) ? false : word
       end
     end
 
@@ -61,11 +61,11 @@ module Pc2r
     # @param range [Range]
     # @return [String]
     def extract_word(old, new, range)
-      mot = Array.new(@grid_size) { EMPTY_CHAR }
-      (range.begin-1).downto(0) { |i| old[i]!=EMPTY_CHAR ? mot[i] = old[i] : break}
-      (range.last+1 ... @grid_size).each { |i| old[i]!=EMPTY_CHAR ? mot[i] = old[i] : break }
-      range.each { |i| mot[i] = new[i] }
-      mot.join.delete EMPTY_CHAR
+      word = Array.new(@grid_size) { EMPTY_CHAR }
+      (range.begin-1).downto(0) { |i| old[i]!=EMPTY_CHAR ? word[i] = old[i] : break }
+      (range.last+1 ... @grid_size).each { |i| old[i]!=EMPTY_CHAR ? word[i] = old[i] : break }
+      range.each { |i| word[i] = new[i] }
+      word.join.delete EMPTY_CHAR
     end
 
     # @param matrix [Matrix]
@@ -78,11 +78,12 @@ module Pc2r
         not_nil_cols << x unless dif.column(x).all? { |e| e.nil? }
       end
       if not_nil_rows.count == 1
-        {old: @matrix.row(not_nil_rows.first), new: matrix.row(not_nil_rows.first), range: not_nil_cols.first .. not_nil_cols.last, indexes: not_nil_cols}
+        [@matrix.row(not_nil_rows.first), matrix.row(not_nil_rows.first), not_nil_cols.first .. not_nil_cols.last, not_nil_cols]
       elsif not_nil_cols.count == 1
-        {old: @matrix.column(not_nil_cols.first), new: matrix.column(not_nil_cols.first), range: not_nil_rows.first .. not_nil_rows.last, indexes: not_nil_rows}
+        [@matrix.column(not_nil_cols.first), matrix.column(not_nil_cols.first), not_nil_rows.first .. not_nil_rows.last, not_nil_rows]
       else
-        raise 'disposition des lettres invalide: lettres sur plusieur lignes ou colones'
+        raise 'disposition des lettres invalide: pas de nouvelle lettre' if not_nil_rows.count == 0 && not_nil_cols.count == 0
+        raise 'disposition des lettres invalide: lettres sur plusieur lignes et colones'
       end
     end
 
