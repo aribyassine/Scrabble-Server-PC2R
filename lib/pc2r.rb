@@ -7,9 +7,8 @@ require 'pp'
 module Pc2r
 
   Config.load
-
   Thread.abort_on_exception = true
-  ScrabbleServer.new(2000).run
+  ScrabbleServer.new(configatron.port).run
 
 end
 

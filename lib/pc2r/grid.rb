@@ -5,7 +5,7 @@ module Pc2r
     attr_reader :matrix, :grid_size
     EMPTY_CHAR = '0'
 
-    def initialize(grid_size = 15)
+    def initialize(grid_size = configatron.grid_size)
       @grid_size = grid_size
       #@rows = Array.new(@grid_size) { Array.new(@grid_size) { EMPTY_CHAR } }
       @matrix = Matrix.build(@grid_size) { EMPTY_CHAR }

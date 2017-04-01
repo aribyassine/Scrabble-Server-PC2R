@@ -1,7 +1,7 @@
 require 'net/http'
 require 'json'
 require 'unidecoder'
-require 'configatron'
+require 'config'
 
 class String
   LETTER_VALUES = {
@@ -27,10 +27,10 @@ class String
 
   # @return [Integer]
   def score
-      self.to_ascii.upcase.chars.map { |letter| letter_values[letter] }.compact.reduce(:+) || 0
+    self.to_ascii.upcase.chars.map { |letter| letter_values[letter] }.compact.reduce(:+) || 0
   end
 
-private
+  private
   def letter_values
     @@letter_values ||= Hash[*LETTER_VALUES.map do |letters, value|
       letters.map { |letter| [letter, value] }
