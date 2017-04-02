@@ -8,8 +8,10 @@ module Pc2r
       configatron.grid_size = 15
 
       # Timers
-      configatron.deb = 3
-      configatron.rec = 5
+      configatron.deb = 1
+      configatron.rec = 1
+      configatron.sou = 1
+      configatron.res = 1
     end
   end
 end

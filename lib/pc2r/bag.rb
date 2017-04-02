@@ -4,11 +4,11 @@ module Pc2r
     LETTERS_DISTRIBUTION = {
         A: 9, B: 2, C: 2, D: 3,
         E: 15, F: 2, G: 2, H: 2,
-        i: 8, j: 1, k: 1, l: 5,
-        m: 3, n: 6, o: 6, p: 2,
-        q: 1, r: 6, s: 6, t: 6,
-        u: 6, v: 2, w: 1, x: 1,
-        y: 1, z: 1
+        I: 8, J: 1, K: 1, L: 5,
+        M: 3, N: 6, O: 6, P: 2,
+        Q: 1, R: 6, S: 6, T: 6,
+        U: 6, V: 2, W: 1, X: 1,
+        Y: 1, Z: 1
     }
 
     def initialize

@@ -14,8 +14,8 @@ module Pc2r
         @socket.puts 'REFUS/'
       else
         @player = Player.new(@socket, user)
-        @session.deb if @player.alone?
-        @player.puts "BIENVENUE/#{@session.grid}/#{Player.scores}/#{@session.state}/#{@session.time}/"
+        @session.start if @player.alone?
+        @player.puts "BIENVENUE/#{@session.grid}/#{Player.scores}/#{@session.phase}/#{@session.time}/"
         @player.broadcast "CONNECTE/#{user}/"
       end
       @player

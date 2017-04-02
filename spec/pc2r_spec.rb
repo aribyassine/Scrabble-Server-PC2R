@@ -6,6 +6,7 @@ require_relative '../lib/pc2r/config'
 
 RSpec.describe Pc2r do
   Thread.abort_on_exception = true
+  Thread.report_on_exception = true
   Pc2r::Config.load
   serveur = Pc2r::ScrabbleServer.new(configatron.port)
   Thread.new { serveur.run }
@@ -19,11 +20,11 @@ RSpec.describe Pc2r do
 
   it 'should connect' do
     a.puts 'CONNEXION/a/'
-    expect(a.gets.chomp).to match(/BIENVENUE\/0{225}\/1\*a\*0\/DEB\/[0-#{configatron.deb}]\//)
+    expect(a.gets.chomp).to match(/BIENVENUE\/0{#{configatron.grid_size ** 2}}\/1\*a\*0\/DEB\/[0-#{configatron.deb}]\//)
     b.puts 'CONNEXION/a/'
     expect(b.gets.chomp).to eq('REFUS/')
     b.puts 'CONNEXION/b/'
-    expect(b.gets.chomp).to match(/BIENVENUE\/0{225}\/1\*a\*0\*b\*0\/DEB\/[0-#{configatron.deb}]\//)
+    expect(b.gets.chomp).to match(/BIENVENUE\/0{#{configatron.grid_size ** 2}}\/1\*a\*0\*b\*0\/DEB\/[0-#{configatron.deb}]\//)
     expect(a.gets.chomp).to eq('CONNECTE/b/')
   end
 
@@ -31,13 +32,23 @@ RSpec.describe Pc2r do
     expect(a.gets.chomp).to eq('SESSION/')
     expect(b.gets.chomp).to eq('SESSION/')
   end
+
   it 'should start a tour' do
-    expect(a.gets.chomp).to match(/TOUR\/([A-Z]|0){225}\/[A-Z]{7}/)
-    expect(b.gets.chomp).to match(/TOUR\/([A-Z]|0){225}\/[A-Z]{7}/)
+    replay_a, replay_b = a.gets.chomp ,b.gets.chomp
+    expect(replay_a).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
+    expect(replay_b).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
+    expect(replay_a).to eq(replay_b)
   end
   it 'should close recherche' do
     expect(a.gets.chomp).to eq('RFIN/')
     expect(b.gets.chomp).to eq('RFIN/')
+  end
+
+  it 'should start a tour 2' do
+    replay_a, replay_b = a.gets.chomp ,b.gets.chomp
+    expect(replay_a).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
+    expect(replay_b).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
+    expect(replay_a).to eq(replay_b)
   end
 
   it 'should send public message' do
