@@ -25,7 +25,7 @@ describe 'Grid' do
         '000000000000000'+
         '000000000000000'
     expect(grid.set! word).to eq 'salut'
-    puts grid.to_s
+    puts grid.pretty
 
   end
   it 'should add word <lutte>' do
@@ -45,7 +45,7 @@ describe 'Grid' do
         '000000000000000'+
         '000000000000000'
     expect(grid.set! word).to eq 'lutte'
-    puts grid.to_s
+    puts grid.pretty
   end
   it 'should add word <botte>' do
     word =
@@ -65,7 +65,7 @@ describe 'Grid' do
         '000000000000000'+
         '000000000000000'
     expect(grid.set! word).to eq 'botte'
-    puts grid.to_s
+    puts grid.pretty
   end
   it 'should add word <sarbacane>' do
     word =
@@ -85,7 +85,7 @@ describe 'Grid' do
         '000000000000000'+
         '000000000000000'
     expect(grid.set! word).to eq 'sarbacane'
-    puts grid.to_s
+    puts grid.pretty
   end
   it 'should raise an Exception' do
     word =
@@ -105,6 +105,6 @@ describe 'Grid' do
         '000000000000000'+
         '0000000000000si'
     expect{grid.set! word}.to raise_exception 'disposition des lettres invalide'
-    puts grid.to_s
+    puts grid.pretty
   end
 end

@@ -1,10 +1,11 @@
 require_relative 'player'
-
+require_relative 'session'
 module Pc2r
   class Controller
     # @param client [TCPSocket]
     def initialize(client)
       @socket = client
+      @session = Session.instance
     end
 
     # @param user [String]
@@ -13,7 +14,8 @@ module Pc2r
         @socket.puts 'REFUS/'
       else
         @player = Player.new(@socket, user)
-        @player.puts "BIENVENUE/#{user}/"
+        @session.deb if @player.alone?
+        @player.puts "BIENVENUE/#{@session.grid}/#{Player.scores}/#{@session.state}/#{@session.time}/"
         @player.broadcast "CONNECTE/#{user}/"
       end
       @player

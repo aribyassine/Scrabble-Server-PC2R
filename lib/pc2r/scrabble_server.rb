@@ -14,6 +14,7 @@ module Pc2r
 
     def shutdown
       @server.close if @server
+      @threads.each { |thread| thread.kill }
     end
 
     def run

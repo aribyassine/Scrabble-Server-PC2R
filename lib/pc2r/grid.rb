@@ -23,9 +23,14 @@ module Pc2r
         raise 'disposition des lettres invalide'
       end
     end
-
     # @return [String]
     def to_s
+      io = StringIO.new
+      @matrix.each{|elem| io.putc elem}
+      io.string
+    end
+    # @return [String]
+    def pretty
       io = StringIO.new
       io.puts '+' + ('-' * @grid_size) + '+'
       @matrix.each_with_index do |elem, row, column|

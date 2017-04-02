@@ -1,48 +1,64 @@
 require 'socket'
 require 'spec_helper'
+require 'pp'
 require_relative '../lib/pc2r/scrabble_server'
+require_relative '../lib/pc2r/config'
 
 RSpec.describe Pc2r do
+  Thread.abort_on_exception = true
+  Pc2r::Config.load
+  serveur = Pc2r::ScrabbleServer.new(configatron.port)
+  Thread.new { serveur.run }
 
-  Thread.new { Pc2r::ScrabbleServer.new(2000).run }
-
-  s1 = TCPSocket.new('localhost', 2000)
-  s2 = TCPSocket.new('localhost', 2000)
+  a = TCPSocket.new('localhost', configatron.port)
+  b = TCPSocket.new('localhost', configatron.port)
 
   it 'has a version number' do
     expect(Pc2r::VERSION).not_to be nil
   end
 
   it 'should connect' do
-    s1.puts 'CONNEXION/a/'
-    expect(s1.gets.chomp).to eq('BIENVENUE/a/')
-    s2.puts 'CONNEXION/a/'
-    expect(s2.gets.chomp).to eq('REFUS/')
-    s2.puts 'CONNEXION/b/'
-    expect(s2.gets.chomp).to eq('BIENVENUE/b/')
-    expect(s1.gets.chomp).to eq('CONNECTE/b/')
+    a.puts 'CONNEXION/a/'
+    expect(a.gets.chomp).to match(/BIENVENUE\/0{225}\/1\*a\*0\/DEB\/[0-#{configatron.deb}]\//)
+    b.puts 'CONNEXION/a/'
+    expect(b.gets.chomp).to eq('REFUS/')
+    b.puts 'CONNEXION/b/'
+    expect(b.gets.chomp).to match(/BIENVENUE\/0{225}\/1\*a\*0\*b\*0\/DEB\/[0-#{configatron.deb}]\//)
+    expect(a.gets.chomp).to eq('CONNECTE/b/')
+  end
+
+  it 'should start session' do
+    expect(a.gets.chomp).to eq('SESSION/')
+    expect(b.gets.chomp).to eq('SESSION/')
+  end
+  it 'should start a tour' do
+    expect(a.gets.chomp).to match(/TOUR\/([A-Z]|0){225}\/[A-Z]{7}/)
+    expect(b.gets.chomp).to match(/TOUR\/([A-Z]|0){225}\/[A-Z]{7}/)
+  end
+  it 'should close recherche' do
+    expect(a.gets.chomp).to eq('RFIN/')
+    expect(b.gets.chomp).to eq('RFIN/')
   end
 
   it 'should send public message' do
     msg = 'hello'
-    s1.puts "ENVOI/#{msg}/"
-    expect(s2.gets.chomp).to eq("RECEPTION/#{msg}/")
+    a.puts "ENVOI/#{msg}/"
+    expect(b.gets.chomp).to eq("RECEPTION/#{msg}/")
   end
 
   it 'should send private message' do
     msg = 'hello'
-    s1.puts "PENVOI/b/#{msg}/"
-    expect(s2.gets.chomp).to eq("PRECEPTION/#{msg}/a/")
+    a.puts "PENVOI/b/#{msg}/"
+    expect(b.gets.chomp).to eq("PRECEPTION/#{msg}/a/")
   end
 
   it 'should disconnect' do
-    s1.puts 'SORT/a/'
-    expect(s1.gets).to be nil
-    s1.close
-    expect(s2.gets.chomp).to eq('DECONNEXION/a/')
-    s2.puts 'SORT/b/'
-    expect(s2.gets).to be nil
-    s2.close
+    a.puts 'SORT/a/'
+    expect(a.gets).to be nil
+    a.close
+    expect(b.gets.chomp).to eq('DECONNEXION/a/')
+    b.puts 'SORT/b/'
+    expect(b.gets).to be nil
+    b.close
   end
-
 end

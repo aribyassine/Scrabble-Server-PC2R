@@ -2,8 +2,8 @@ module Pc2r
   class Bag
 
     LETTERS_DISTRIBUTION = {
-        a: 9, b: 2, c: 2, d: 3,
-        e: 15, f: 2, g: 2, h: 2,
+        A: 9, B: 2, C: 2, D: 3,
+        E: 15, F: 2, G: 2, H: 2,
         i: 8, j: 1, k: 1, l: 5,
         m: 3, n: 6, o: 6, p: 2,
         q: 1, r: 6, s: 6, t: 6,

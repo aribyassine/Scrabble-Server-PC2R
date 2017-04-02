@@ -6,6 +6,10 @@ module Pc2r
       configatron.dictuonary = File.expand_path('../../assets/ods.txt', __dir__)
       configatron.port = 2000
       configatron.grid_size = 15
+
+      # Timers
+      configatron.deb = 3
+      configatron.rec = 5
     end
   end
 end
