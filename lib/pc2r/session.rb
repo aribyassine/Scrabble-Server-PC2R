@@ -28,7 +28,7 @@ module Pc2r
 
 
     def tour
-      return 1 if @tour.nil?
+      return 1 if @tour.nil? # si phase = debut
       @tour.number
     end
 

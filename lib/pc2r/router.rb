@@ -8,14 +8,16 @@ module Pc2r
       @socket = client
       @controller = Controller.new(client)
 
-      @user = '[a-zA-Z]+'
-      @msg = '.+'
+      user = '[a-zA-Z]+'
+      msg = '.+'
+      placement = "([A-Z]|0){#{configatron.grid_size ** 2}}"
 
       @regexp = {
-          :connexion => /^CONNEXION\/(#{@user})\/$/,
-          :sort => /^SORT\/(#{@user})\/$/,
-          :envoi => /^ENVOI\/(#{@msg})\/$/,
-          :penvoi => /^PENVOI\/(#{@user})\/(#{@msg})\/$/,
+          connexion: /^CONNEXION\/(#{user})\/$/,
+          sort: /^SORT\/(#{user})\/$/,
+          trouve: /^TROUVE\/(#{placement})\/$/,
+          envoi: /^ENVOI\/(#{msg})\/$/,
+          penvoi: /^PENVOI\/(#{user})\/(#{msg})\/$/,
       }
 
     end
@@ -54,6 +56,8 @@ module Pc2r
               @controller.envoi(params[0])
             when :penvoi then
               @controller.penvoi(params[0], params[1])
+            when :trouve then
+              @controller.trouve(params[0])
           end
         else
           # Utilisateur non authentifié

@@ -33,18 +33,18 @@ RSpec.describe Pc2r do
     expect(b.gets.chomp).to eq('SESSION/')
   end
 
-  it 'should start a tour' do
+  it 'should send tour' do
     replay_a, replay_b = a.gets.chomp ,b.gets.chomp
     expect(replay_a).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
     expect(replay_b).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
     expect(replay_a).to eq(replay_b)
   end
-  it 'should close recherche' do
+  it 'should send RFIN/' do
     expect(a.gets.chomp).to eq('RFIN/')
     expect(b.gets.chomp).to eq('RFIN/')
   end
 
-  it 'should start a tour 2' do
+  it 'should send tour 2' do
     replay_a, replay_b = a.gets.chomp ,b.gets.chomp
     expect(replay_a).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
     expect(replay_b).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)

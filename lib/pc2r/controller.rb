@@ -29,6 +29,10 @@ module Pc2r
       end
     end
 
+    # @param placement [String]
+    def trouve(placement)
+    end
+
     # @param msg [String]
     def envoi(msg)
       @player.broadcast "RECEPTION/#{msg}/"
