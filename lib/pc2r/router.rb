@@ -5,7 +5,7 @@ module Pc2r
 
     # @param client [TCPSocket]
     def initialize(client)
-      @client = client
+      @socket = client
       @controller = Controller.new(client)
 
       @user = '[a-zA-Z]+'
@@ -23,14 +23,14 @@ module Pc2r
     def process
       loop do
         begin
-          request = @client.gets.chomp.force_encoding('UTF-8').to_s
+          request = @socket.gets.chomp.force_encoding('UTF-8').to_s
         rescue Exception => e
           puts e.message
           puts e.backtrace.inspect
           if @player
             @player.destroy
           else
-            @client.close
+            @socket.close
             Thread.current.kill
           end
           break

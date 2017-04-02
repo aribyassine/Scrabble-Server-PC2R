@@ -4,12 +4,12 @@ module Pc2r
   class Player
 
     @@players = Concurrent::Array.new
-    attr_reader :client, :name
+    attr_reader :socket, :name
 
-    # @param client [TCPSocket]
+    # @param socket [TCPSocket]
     # @param name [String]
-    def initialize(client, name)
-      @client = client
+    def initialize(socket, name)
+      @socket = socket
       @name = name
       @@players << self
     end
@@ -20,12 +20,12 @@ module Pc2r
     end
 
     def puts (obj='', *arg)
-      @client.puts(obj, arg)
+      @socket.puts(obj, arg)
     end
 
     def destroy
       @@players.delete self
-      @client.close
+      @socket.close
       Thread.current.kill
     end
 

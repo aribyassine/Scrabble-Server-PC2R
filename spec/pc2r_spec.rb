@@ -1,5 +1,5 @@
-require 'spec_helper'
 require 'socket'
+require 'spec_helper'
 require_relative '../lib/pc2r/scrabble_server'
 
 RSpec.describe Pc2r do

@@ -7,14 +7,14 @@ module Pc2r
 
     def initialize(grid_size = configatron.grid_size)
       @grid_size = grid_size
-      #@rows = Array.new(@grid_size) { Array.new(@grid_size) { EMPTY_CHAR } }
       @matrix = Matrix.build(@grid_size) { EMPTY_CHAR }
       @empty = true
     end
 
     # @param placement [String]
     def set!(placement)
-      if (word = valid?(placement))
+      if valid? placement
+        word = extract_word placement
         raise "le mot <#{word}> n'est pas dans le dictionnaire" unless word.exist_in_dictuonary?
         @matrix = to_matrix placement
         @empty = false
@@ -37,30 +37,26 @@ module Pc2r
       io.string
     end
 
-    private
     # @param placement [String]
     def valid?(placement)
-      # TODO refactor plusbesoin de mot
       old, new, range, indexes = stat(to_matrix placement)
-      word = extract_word(old, new, range)
-      if range.to_a == indexes
-        dif = false
+      if range.to_a == indexes #prefix ou suffix
+        return true if @empty
         (0 ... @grid_size).each { |i|
           unless indexes.include? i
-            dif = word if old[i] != EMPTY_CHAR
+            return true if old[i] != EMPTY_CHAR
           end
         }
-        @empty ? word : dif
+        false
       else
-        new[range].include?(EMPTY_CHAR) ? false : word
+        !new[range].include?(EMPTY_CHAR)
       end
     end
 
-    # @param old [Array]
-    # @param new [Array]
-    # @param range [Range]
+    # @param placement [String]
     # @return [String]
-    def extract_word(old, new, range)
+    def extract_word(placement)
+      old, new, range = stat(to_matrix placement)
       word = Array.new(@grid_size) { EMPTY_CHAR }
       (range.begin-1).downto(0) { |i| old[i]!=EMPTY_CHAR ? word[i] = old[i] : break }
       (range.last+1 ... @grid_size).each { |i| old[i]!=EMPTY_CHAR ? word[i] = old[i] : break }
@@ -68,8 +64,9 @@ module Pc2r
       word.join.delete EMPTY_CHAR
     end
 
+    private
     # @param matrix [Matrix]
-    # @return [Hash]
+    # @return [Array]
     def stat(matrix)
       dif = difference matrix
       not_nil_rows, not_nil_cols = [], []
@@ -77,12 +74,22 @@ module Pc2r
         not_nil_rows << x unless dif.row(x).all? { |e| e.nil? }
         not_nil_cols << x unless dif.column(x).all? { |e| e.nil? }
       end
-      if not_nil_rows.count == 1
-        [@matrix.row(not_nil_rows.first), matrix.row(not_nil_rows.first), not_nil_cols.first .. not_nil_cols.last, not_nil_cols]
-      elsif not_nil_cols.count == 1
-        [@matrix.column(not_nil_cols.first), matrix.column(not_nil_cols.first), not_nil_rows.first .. not_nil_rows.last, not_nil_rows]
+      row_index, col_index = not_nil_rows.first, not_nil_cols.first
+      row_count, col_count =not_nil_rows.count, not_nil_cols.count
+      if row_count == 1 && not_nil_cols.count == 1 # one letter added
+        if @matrix.row(row_index - 1)[col_index] != EMPTY_CHAR || @matrix.row(row_index + 1)[col_index] != EMPTY_CHAR
+          [@matrix.column(col_index), matrix.column(col_index), not_nil_rows.first .. not_nil_rows.last, not_nil_rows]
+        elsif @matrix.column(col_index - 1)[row_index] != EMPTY_CHAR || @matrix.column(col_index + 1)[row_index] != EMPTY_CHAR
+          [@matrix.row(row_index), matrix.row(row_index), not_nil_cols.first .. not_nil_cols.last, not_nil_cols]
+        else
+          raise 'disposition des lettres invalide: la lettre n\'est rattacher a aucun mot '
+        end
+      elsif row_count == 1
+        [@matrix.row(row_index), matrix.row(row_index), not_nil_cols.first .. not_nil_cols.last, not_nil_cols]
+      elsif col_count == 1
+        [@matrix.column(col_index), matrix.column(col_index), not_nil_rows.first .. not_nil_rows.last, not_nil_rows]
       else
-        raise 'disposition des lettres invalide: pas de nouvelle lettre' if not_nil_rows.count == 0 && not_nil_cols.count == 0
+        raise 'disposition des lettres invalide: pas de nouvelle lettre' if row_count == 0 && col_count == 0
         raise 'disposition des lettres invalide: lettres sur plusieur lignes et colones'
       end
     end

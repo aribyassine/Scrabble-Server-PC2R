@@ -1,7 +1,7 @@
 require 'rspec'
 require_relative '../lib/pc2r/grid'
 require_relative '../lib/pc2r/string'
-require_relative '../lib/config'
+require_relative '../lib/pc2r/config'
 
 describe 'Grid' do
 
@@ -47,8 +47,9 @@ describe 'Grid' do
     expect(grid.set! word).to eq 'lutte'
     puts grid.to_s
   end
-  it 'should add word <lutte>' do
-    word = 's00b00000000000'+
+  it 'should add word <botte>' do
+    word =
+        's00b00000000000'+
         'a00o00000000000'+
         'lutte0000000000'+
         'u00t00000000000'+
@@ -64,6 +65,46 @@ describe 'Grid' do
         '000000000000000'+
         '000000000000000'
     expect(grid.set! word).to eq 'botte'
+    puts grid.to_s
+  end
+  it 'should add word <sarbacane>' do
+    word =
+        'sarbacane000000'+
+        'a00o00000000000'+
+        'lutte0000000000'+
+        'u00t00000000000'+
+        't00e00000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'
+    expect(grid.set! word).to eq 'sarbacane'
+    puts grid.to_s
+  end
+  it 'should raise an Exception' do
+    word =
+        'sarbacane000000'+
+        'a00o00000000000'+
+        'lutte0000000000'+
+        'u00t00000000000'+
+        't00e00000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '000000000000000'+
+        '0000000000000si'
+    expect{grid.set! word}.to raise_exception 'disposition des lettres invalide'
     puts grid.to_s
   end
 end

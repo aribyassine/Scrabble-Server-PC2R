@@ -4,15 +4,15 @@ module Pc2r
   class Controller
     # @param client [TCPSocket]
     def initialize(client)
-      @client = client
+      @socket = client
     end
 
     # @param user [String]
     def connexion(user)
       if Player.exist? user
-        @client.puts 'REFUS/'
+        @socket.puts 'REFUS/'
       else
-        @player = Player.new(@client, user)
+        @player = Player.new(@socket, user)
         @player.puts "BIENVENUE/#{user}/"
         @player.broadcast "CONNECTE/#{user}/"
       end

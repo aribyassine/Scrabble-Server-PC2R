@@ -1,7 +1,6 @@
 require 'net/http'
 require 'json'
 require 'unidecoder'
-require 'config'
 
 class String
   LETTER_VALUES = {

@@ -21,9 +21,7 @@ module Pc2r
 
     # @param n [Integer]
     # @return [Array]
-    def take(n=1)
-      # Fin de session ... plus de lettres dans le sac
-      raise "Can't take #{n} letters i have only #{@letters.count}" if n > @letters.count
+    def take(n=7)
       @letters.pop n
     end
   end
