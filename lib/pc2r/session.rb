@@ -1,22 +1,16 @@
 require 'concurrent'
 require 'timeout'
 require 'singleton'
+require 'thread'
 require_relative 'player'
 require_relative 'grid'
 require_relative 'bag'
 require_relative 'tour'
 
 module Pc2r
-  class Session
+  class Session < Mutex
     include Singleton
-    attr_reader :phase, :time, :grid, :bag
-
-    def init
-      @grid = Grid.new
-      @bag = Bag.new
-      @time = configatron.deb
-      @tasks = {}
-    end
+    attr_reader :phase, :time, :grid
 
     def start
       init
@@ -26,13 +20,55 @@ module Pc2r
       end
     end
 
+    # @param placement [String]
+    # @param player [Player]
+    def trouve(placement, player)
+      begin
+        if @grid.valid? placement
+          word = @grid.extract_word placement
+          raise "le mot <#{word}> n'est pas dans le dictionnaire" unless word.exist_in_dictuonary?
+          used_letters = @grid.letters_used placement
+          raise "le mot <#{word}> doit etre composé avec les lettres suivantes #{@tour.tirage.to_a.inspect}" unless @tour.tirage >= used_letters
+          synchronize {
+            if @tasks[:REC].running?
+              player.puts 'RVALIDE/'
+              player.broadcast "RATROUVE/#{player.name}/"
+              @tour.found[player.name] = word
+              @tasks[:REC].shutdown
+            elsif @tasks[:SOU].running?
+              player.puts 'SVALIDE/'
 
+            end
+          }
+        else
+          raise 'disposition des lettres invalide'
+        end
+      rescue Exception => e
+        synchronize {
+          if @tasks[:REC].running?
+            player.puts "RINVALIDE/#{e.message}/"
+          elsif @tasks[:SOU].running?
+            player.puts "SINVALIDE/#{e.message}/"
+          end
+        }
+      end
+    end
+
+    # @return [Integer]
     def tour
       return 1 if @tour.nil? # si phase = debut
       @tour.number
     end
 
     private
+
+    def init
+      @grid = Grid.new
+      @bag = Bag.new
+      @time = configatron.deb
+      @tasks = {}
+    end
+
     def loop_forever
       loop do
         # Début du tour
@@ -69,9 +105,11 @@ module Pc2r
         @time = time
         time -= 1
         if @time <= 0
-          block.call
-          @phase = :REC
-          task.shutdown
+          synchronize {
+            block.call
+            @phase = :REC
+            task.shutdown
+          }
         end
       end.execute
     end
@@ -83,9 +121,11 @@ module Pc2r
         @time = time
         time -= 1
         if @time <= 0
-          block.call
-          @phase = :SOU
-          task.shutdown
+          synchronize {
+            block.call
+            @phase = :SOU
+            task.shutdown
+          }
         end
       end.execute
     end
@@ -97,12 +137,15 @@ module Pc2r
         @time = time
         time -= 1
         if @time <= 0
-          block.call
-          @phase = :RES
-          task.shutdown
+          synchronize {
+            block.call
+            @phase = :RES
+            task.shutdown
+          }
         end
       end.execute
     end
+
     # @param time [Integer]
     def resultat(time, &block)
       Concurrent::TimerTask.new(execution_interval: 1, run_now: true) do |task|
@@ -111,8 +154,10 @@ module Pc2r
         @time = time
         time -= 1
         if @time <= 0
-          @phase = :REC
-          task.shutdown
+          synchronize {
+            @phase = :REC
+            task.shutdown
+          }
         end
       end.execute
     end

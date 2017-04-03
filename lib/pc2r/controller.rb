@@ -1,7 +1,9 @@
 require_relative 'player'
 require_relative 'session'
+
 module Pc2r
   class Controller
+
     # @param client [TCPSocket]
     def initialize(client)
       @socket = client
@@ -13,8 +15,10 @@ module Pc2r
       if Player.exist? user
         @socket.puts 'REFUS/'
       else
-        @player = Player.new(@socket, user)
-        @session.start if @player.alone?
+        @session.synchronize { # la session est un singleton, on peut donc se synchroniser dessu
+          @player = Player.new(@socket, user)
+          @session.start if @player.alone?
+        }
         @player.puts "BIENVENUE/#{@session.grid}/#{Player.scores}/#{@session.phase}/#{@session.time}/"
         @player.broadcast "CONNECTE/#{user}/"
       end
@@ -31,6 +35,7 @@ module Pc2r
 
     # @param placement [String]
     def trouve(placement)
+      @session.trouve(placement, @player)
     end
 
     # @param msg [String]
@@ -40,7 +45,7 @@ module Pc2r
 
     # @param user [String]
     # @param msg [String]
-    def penvoi(user,msg)
+    def penvoi(user, msg)
       dst = Player.find(user)
       src = @player.name
       if dst

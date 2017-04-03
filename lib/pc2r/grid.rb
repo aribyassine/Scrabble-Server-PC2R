@@ -2,6 +2,7 @@ require 'matrix'
 
 module Pc2r
   class Grid
+
     attr_reader :matrix, :grid_size
     EMPTY_CHAR = '0'
 
@@ -23,12 +24,24 @@ module Pc2r
         raise 'disposition des lettres invalide'
       end
     end
+
+    # @param placement [String]
+    def letters_used(placement)
+      matrix = to_matrix placement
+      dif = Set.new
+      @matrix.each_with_index do |elem, row, column|
+        dif << matrix[row, column] if elem != matrix[row, column]
+      end
+      dif
+    end
+
     # @return [String]
     def to_s
       io = StringIO.new
-      @matrix.each{|elem| io.putc elem}
-      io.string
+      @matrix.each { |elem| io.putc elem }
+      io.s
     end
+
     # @return [String]
     def pretty
       io = StringIO.new

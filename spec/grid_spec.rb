@@ -24,6 +24,7 @@ describe 'Grid' do
         '000000000000000'+
         '000000000000000'+
         '000000000000000'
+    expect(grid.letters_used(word)).to eq('salut'.chars.to_set)
     expect(grid.set! word).to eq 'salut'
     puts grid.pretty
 
@@ -44,6 +45,7 @@ describe 'Grid' do
         '000000000000000'+
         '000000000000000'+
         '000000000000000'
+    expect(grid.letters_used(word)).to eq('utte'.chars.to_set)
     expect(grid.set! word).to eq 'lutte'
     puts grid.pretty
   end
@@ -64,6 +66,7 @@ describe 'Grid' do
         '000000000000000'+
         '000000000000000'+
         '000000000000000'
+    expect(grid.letters_used(word)).to eq('bote'.chars.to_set)
     expect(grid.set! word).to eq 'botte'
     puts grid.pretty
   end
@@ -84,6 +87,7 @@ describe 'Grid' do
         '000000000000000'+
         '000000000000000'+
         '000000000000000'
+    expect(grid.letters_used(word)).to eq('aracane'.chars.to_set)
     expect(grid.set! word).to eq 'sarbacane'
     puts grid.pretty
   end
