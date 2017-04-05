@@ -16,12 +16,12 @@ module Pc2r
     def set!(placement)
       if valid? placement
         word = extract_word placement
-        raise "le mot <#{word}> n'est pas dans le dictionnaire" unless word.exist_in_dictuonary?
+        raise "DIC le mot <#{word}> n'est pas dans le dictionnaire" unless word.exist_in_dictuonary?
         @matrix = to_matrix placement
         @empty = false
         word
       else
-        raise 'disposition des lettres invalide'
+        raise 'POS disposition des lettres invalide'
       end
     end
 
@@ -39,7 +39,7 @@ module Pc2r
     def to_s
       io = StringIO.new
       @matrix.each { |elem| io.putc elem }
-      io.s
+      io.string
     end
 
     # @return [String]
@@ -100,15 +100,15 @@ module Pc2r
         elsif @matrix.column(col_index - 1)[row_index] != EMPTY_CHAR || @matrix.column(col_index + 1)[row_index] != EMPTY_CHAR
           [@matrix.row(row_index), matrix.row(row_index), not_nil_cols.first .. not_nil_cols.last, not_nil_cols]
         else
-          raise 'disposition des lettres invalide: la lettre n\'est rattacher a aucun mot '
+          raise 'POS disposition des lettres invalide: la lettre n\'est rattacher a aucun mot '
         end
       elsif row_count == 1
         [@matrix.row(row_index), matrix.row(row_index), not_nil_cols.first .. not_nil_cols.last, not_nil_cols]
       elsif col_count == 1
         [@matrix.column(col_index), matrix.column(col_index), not_nil_rows.first .. not_nil_rows.last, not_nil_rows]
       else
-        raise 'disposition des lettres invalide: pas de nouvelle lettre' if row_count == 0 && col_count == 0
-        raise 'disposition des lettres invalide: lettres sur plusieur lignes et colones'
+        raise 'POS disposition des lettres invalide: pas de nouvelle lettre' if row_count == 0 && col_count == 0
+        raise 'POS disposition des lettres invalide: lettres sur plusieur lignes et colones'
       end
     end
 
@@ -126,7 +126,7 @@ module Pc2r
     # @param placement [String]
     # @return [Matrix]
     def to_matrix(placement)
-      raise "Le placement donné doit être une chaîne de #{@grid_size ** 2} characters" if placement.length != @grid_size ** 2
+      raise "POS Le placement donné doit être une chaîne de #{@grid_size ** 2} characters" if placement.length != @grid_size ** 2
       Matrix.build(@grid_size) { |row, col| placement[row * @grid_size + col] }
     end
 

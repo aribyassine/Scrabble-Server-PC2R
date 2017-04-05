@@ -27,7 +27,9 @@ module Pc2r
     end
 
     def destroy
+      Session.instance.finish if alone? # derrnier de la pa
       @@players.delete self
+      broadcast "DECONNEXION/#{@name}/"
       @socket.close
       Thread.current.kill
     end
@@ -50,7 +52,7 @@ module Pc2r
       # @return [String]
       def scores
         io = StringIO.new
-        io.print Session.instance.tour
+        io.print Session.instance.tour.number
         @@players.each do |player|
           io.print "*#{player.name}*#{player.score}"
         end

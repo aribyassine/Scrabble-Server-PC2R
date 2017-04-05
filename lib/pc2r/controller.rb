@@ -19,7 +19,7 @@ module Pc2r
           @player = Player.new(@socket, user)
           @session.start if @player.alone?
         }
-        @player.puts "BIENVENUE/#{@session.grid}/#{Player.scores}/#{@session.phase}/#{@session.time}/"
+        @player.puts "BIENVENUE/#{@session.grid}/#{@session.tour.tirage.join}/#{Player.scores}/#{@session.phase}/#{@session.time}/"
         @player.broadcast "CONNECTE/#{user}/"
       end
       @player
@@ -28,14 +28,13 @@ module Pc2r
     # @param user [String]
     def sort(user)
       if @player.name == user
-        @player.broadcast "DECONNEXION/#{user}/"
         @player.destroy
       end
     end
 
     # @param placement [String]
     def trouve(placement)
-      @session.trouve(placement, @player)
+      @session.trouve(placement, @player) if  @session.synchronize { @session.phase == :REC || @session.phase == :SOU }
     end
 
     # @param msg [String]

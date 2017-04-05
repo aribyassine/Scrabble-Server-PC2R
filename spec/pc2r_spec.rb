@@ -20,11 +20,11 @@ RSpec.describe Pc2r do
 
   it 'should connect' do
     a.puts 'CONNEXION/a/'
-    expect(a.gets.chomp).to match(/BIENVENUE\/0{#{configatron.grid_size ** 2}}\/1\*a\*0\/DEB\/[0-#{configatron.deb}]\//)
+    expect(a.gets.chomp).to match(/BIENVENUE\/0{#{configatron.grid_size ** 2}}\/[A-Z]{7}\/1\*a\*0\/DEB\/[[:digit:]]*\//)
     b.puts 'CONNEXION/a/'
     expect(b.gets.chomp).to eq('REFUS/')
     b.puts 'CONNEXION/b/'
-    expect(b.gets.chomp).to match(/BIENVENUE\/0{#{configatron.grid_size ** 2}}\/1\*a\*0\*b\*0\/DEB\/[0-#{configatron.deb}]\//)
+    expect(b.gets.chomp).to match(/BIENVENUE\/0{#{configatron.grid_size ** 2}}\/[A-Z]{7}\/1\*a\*0\*b\*0\/DEB\/[[:digit:]]*\//)
     expect(a.gets.chomp).to eq('CONNECTE/b/')
   end
 
@@ -33,12 +33,6 @@ RSpec.describe Pc2r do
     expect(b.gets.chomp).to eq('SESSION/')
   end
 
-  it 'should send tour' do
-    replay_a, replay_b = a.gets.chomp ,b.gets.chomp
-    expect(replay_a).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
-    expect(replay_b).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
-    expect(replay_a).to eq(replay_b)
-  end
   it 'should send RFIN/' do
     expect(a.gets.chomp).to eq('RFIN/')
     expect(b.gets.chomp).to eq('RFIN/')
@@ -61,6 +55,18 @@ RSpec.describe Pc2r do
     msg = 'hello'
     a.puts "PENVOI/b/#{msg}/"
     expect(b.gets.chomp).to eq("PRECEPTION/#{msg}/a/")
+  end
+
+  it 'should send RFIN/' do
+    expect(a.gets.chomp).to eq('RFIN/')
+    expect(b.gets.chomp).to eq('RFIN/')
+  end
+
+  it 'should send tour 3' do
+    replay_a, replay_b = a.gets.chomp ,b.gets.chomp
+    expect(replay_a).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
+    expect(replay_b).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
+    expect(replay_a).to eq(replay_b)
   end
 
   it 'should disconnect' do
