@@ -15,6 +15,10 @@ module Pc2r
       @placement = {}
     end
 
+    def winner
+      @word.max_by { |word| word.last.score }
+    end
+
     def self.reset_number
       @@number = 1
     end

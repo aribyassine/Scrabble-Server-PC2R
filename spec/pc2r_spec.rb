@@ -7,7 +7,18 @@ require_relative '../lib/pc2r/config'
 RSpec.describe Pc2r do
   Thread.abort_on_exception = true
   Thread.report_on_exception = true
-  Pc2r::Config.load
+  configatron.dictuonary = File.expand_path('../../assets/ods.txt', __dir__)
+
+  configatron.port = 2000
+  configatron.grid_size = 15
+
+  # Timers
+  configatron.deb = 2
+  configatron.rec = 2
+  configatron.sou = 2
+  configatron.res = 2
+
+  configatron.inter_session_time = 2
   serveur = Pc2r::ScrabbleServer.new(configatron.port)
   Thread.new { serveur.run }
 
@@ -39,7 +50,7 @@ RSpec.describe Pc2r do
   end
 
   it 'should send tour 2' do
-    replay_a, replay_b = a.gets.chomp ,b.gets.chomp
+    replay_a, replay_b = a.gets.chomp, b.gets.chomp
     expect(replay_a).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
     expect(replay_b).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
     expect(replay_a).to eq(replay_b)
@@ -63,7 +74,7 @@ RSpec.describe Pc2r do
   end
 
   it 'should send tour 3' do
-    replay_a, replay_b = a.gets.chomp ,b.gets.chomp
+    replay_a, replay_b = a.gets.chomp, b.gets.chomp
     expect(replay_a).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
     expect(replay_b).to match(/TOUR\/([A-Z]|0){#{configatron.grid_size ** 2}}\/[A-Z]{7}/)
     expect(replay_a).to eq(replay_b)

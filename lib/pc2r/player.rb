@@ -1,10 +1,12 @@
 require 'concurrent/array'
+require 'thread'
 require_relative 'session'
 
 module Pc2r
   class Player
 
     @@players = Concurrent::Array.new
+    @@mutex = Mutex.new
     attr_reader :socket, :name
     attr_accessor :score
 
@@ -19,7 +21,7 @@ module Pc2r
 
     # @param msg [String]
     def broadcast(msg)
-      @@players.each { |player| player.puts msg unless player == self }
+      @@mutex.synchronize { @@players.each { |player| player.puts msg unless player == self } }
     end
 
     def puts (obj='', *arg)
@@ -27,11 +29,13 @@ module Pc2r
     end
 
     def destroy
-      Session.instance.finish if alone? # derrnier de la pa
-      @@players.delete self
       broadcast "DECONNEXION/#{@name}/"
-      @socket.close
-      Thread.current.kill
+      @@mutex.synchronize {
+        @@players.delete self
+        Session.instance.finish if @@players.count == 0 # derrnier de la partie
+        @socket.close
+        Thread.current.kill
+      }
     end
 
     def alone?
@@ -41,7 +45,7 @@ module Pc2r
     class << self
       # @param msg [String]
       def broadcast(msg)
-        @@players.each { |player| player.puts msg}
+        @@mutex.synchronize { @@players.each { |player| player.puts msg } }
       end
 
       # @return [Array]
@@ -49,26 +53,37 @@ module Pc2r
         @@players
       end
 
+      # @return [Integer]
+      def count
+        @@players.count
+      end
+
       # @return [String]
       def scores
-        io = StringIO.new
-        io.print Session.instance.tour.number
-        @@players.each do |player|
-          io.print "*#{player.name}*#{player.score}"
-        end
-        io.string
-    end
+        @@mutex.synchronize {
+          io = StringIO.new
+          io.print Session.instance.tour.number
+          @@players.each do |player|
+            io.print "*#{player.name}*#{player.score}"
+          end
+          io.string
+        }
+      end
 
       # @param user [String]
       def exist?(user)
-        @@players.each { |player| return true if player.name == user }
-        false
+        @@mutex.synchronize {
+          @@players.each { |player| return true if player.name == user }
+          false
+        }
       end
 
       # @param user [String]
       # @return [Player]
       def find(user)
-        @@players.find { |player| player.name == user }
+        @@mutex.synchronize {
+          @@players.find { |player| player.name == user }
+        }
       end
     end
   end
