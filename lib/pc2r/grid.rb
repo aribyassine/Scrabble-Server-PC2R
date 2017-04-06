@@ -16,7 +16,7 @@ module Pc2r
     def set!(placement)
       if valid? placement
         word = extract_word placement
-        raise "DIC le mot <#{word}> n'est pas dans le dictionnaire" unless word.exist_in_dictuonary?
+        raise "DIC le mot <#{word}> n'est pas dans le dictionnaire" unless word.exist?
         @matrix = to_matrix placement
         @empty = false
         word

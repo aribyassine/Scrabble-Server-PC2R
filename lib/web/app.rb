@@ -1,21 +1,11 @@
 require 'sinatra'
 require 'json'
-
-def load_files(path)
-  sessions = {}
-  Dir.foreach(File.expand_path('../web/scores', __dir__)) do |item|
-    next unless item =~ /[0-9]*\.json/
-    key = Time.at(item.split('.').first.to_i).ctime
-    sessions[key] = JSON.parse(File.readlines(path+"/#{item}").first)
-    sessions[key][:id] = item.split('.').first.to_i
-  end
-  sessions
-end
+require_relative '../pc2r/configutation'
+Pc2r::Configutation.load
 
 get '/' do
-  sessions = load_files(File.expand_path('../web/scores', __dir__))
   best_scores = []
-  sessions.each_pair do |date, session|
+  parse_json(configatron.web).each_pair do |date, session|
     best = {}
     session.each_pair do |user_name, game|
       best = {
@@ -25,14 +15,33 @@ get '/' do
     best_scores << best
   end
 
-  erb :index, :locals => {:best_scores => best_scores}
+  erb :index, :locals => {best_scores: best_scores}
 end
 
 get '/user/:name' do |name|
-  erb :user, :locals => {:name => name}
+  games = []
+  parse_json(configatron.web).each_pair do |date, session|
+    if session[name]
+      session[name][:date] = date
+      session[name][:id] = session[:id]
+      games << session[name]
+    end
+  end
+  erb :user, locals: {name: name, stat: games}
 end
 
 get '/session/:id' do |id|
-  json = JSON.parse(File.readlines(File.expand_path('../web/scores', __dir__)+"/#{id}.json").first)
-  erb :session, :locals => {:json => json,:time => id}
+  json = JSON.parse(File.readlines(configatron.web+"/#{id}.json").first)
+  erb :session, locals: {json: json, time: id}
+end
+
+def parse_json(path)
+  sessions = {}
+  Dir.foreach(path) do |item|
+    next unless item =~ /[0-9]*\.json/
+    key = Time.at(item.split('.').first.to_i).ctime
+    sessions[key] = JSON.parse(File.readlines(path+"/#{item}").first)
+    sessions[key][:id] = item.split('.').first.to_i
+  end
+  sessions
 end

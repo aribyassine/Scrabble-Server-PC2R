@@ -1,11 +1,11 @@
 require 'rspec'
 require_relative '../lib/pc2r/grid'
 require_relative '../lib/pc2r/string'
-require_relative '../lib/pc2r/config'
+require_relative '../lib/pc2r/configutation'
 
 describe 'Grid' do
 
-  Pc2r::Config.load
+  Pc2r::Configutation.load
   grid = Pc2r::Grid.new
 
   it 'should add first word <salut>' do
@@ -108,7 +108,7 @@ describe 'Grid' do
         '000000000000000'+
         '000000000000000'+
         '0000000000000si'
-    expect{grid.set! word}.to raise_exception 'disposition des lettres invalide'
+    expect{grid.set! word}.to raise_exception 'POS disposition des lettres invalide'
     puts grid.pretty
   end
 end

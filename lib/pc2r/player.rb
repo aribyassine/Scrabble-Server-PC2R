@@ -25,6 +25,7 @@ module Pc2r
     end
 
     def puts (obj='', *arg)
+      Kernel.puts "#{@name} --> #{obj}"
       @socket.puts(obj, arg)
     end
 
@@ -32,7 +33,7 @@ module Pc2r
       broadcast "DECONNEXION/#{@name}/"
       @@mutex.synchronize {
         @@players.delete self
-        Session.instance.finish if @@players.count == 0 # derrnier de la partie
+        Session.instance.stop if @@players.count == 0 # derrnier de la partie
         @socket.close
         Thread.current.kill
       }

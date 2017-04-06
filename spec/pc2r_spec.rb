@@ -2,9 +2,10 @@ require 'socket'
 require 'spec_helper'
 require 'pp'
 require_relative '../lib/pc2r/scrabble_server'
-require_relative '../lib/pc2r/config'
+require_relative '../lib/pc2r/configutation'
 
 RSpec.describe Pc2r do
+  Pc2r::Configutation.load
   Thread.abort_on_exception = true
   Thread.report_on_exception = true
   configatron.dictuonary = File.expand_path('../../assets/ods.txt', __dir__)

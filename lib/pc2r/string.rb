@@ -3,14 +3,6 @@ require 'json'
 require 'unidecoder'
 
 class String
-  LETTER_VALUES = {
-      %w(E A I N O R S T U L) => 1,
-      %w(D M G) => 2,
-      %w(B C P) => 3,
-      %w(F H V) => 4,
-      %w(J Q) => 8,
-      %w(K W X Y Z) => 10
-  }
 
   def exist_in_wiktionary?
     url = "https://fr.wiktionary.org/w/api.php?action=query&titles=#{self.downcase}&format=json"
@@ -21,20 +13,23 @@ class String
   end
 
   def exist_in_dictuonary?
-    String.dictuonary.include? self.chomp.upcase.to_ascii
+      String.dictuonary.include? self.chomp.upcase.to_ascii
+  end
+
+  def exist?
+    if configatron.wiktionary
+      exist_in_wiktionary?
+    else
+      exist_in_dictuonary?
+    end
   end
 
   # @return [Integer]
   def score
-    self.to_ascii.upcase.chars.map { |letter| letter_values[letter] }.compact.reduce(:+) || 0
+    self.to_ascii.upcase.chars.map { |letter| configatron.letters_values[letter.to_sym] }.compact.reduce(:+) || 0
   end
 
   private
-  def letter_values
-    @@letter_values ||= Hash[*LETTER_VALUES.map do |letters, value|
-      letters.map { |letter| [letter, value] }
-    end.flatten]
-  end
 
   # @return [Set]
   def self.dictuonary

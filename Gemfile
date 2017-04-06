@@ -4,5 +4,6 @@ source 'https://rubygems.org'
 gem 'unidecoder', '~> 1.1', '>= 1.1.2'
 gem 'concurrent-ruby', require: 'concurrent'
 gem 'configatron'
+gem 'config'
 gem 'sinatra'
 gemspec

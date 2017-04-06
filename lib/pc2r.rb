@@ -2,7 +2,7 @@ require_relative 'pc2r/scrabble_server'
 require_relative 'pc2r/string'
 require_relative 'pc2r/grid'
 require_relative 'pc2r/bag'
-require_relative 'pc2r/config'
+require_relative 'pc2r/configutation'
 require 'pp'
 
 module Pc2r
@@ -18,7 +18,7 @@ module Pc2r
   pp h
   pp h.max_by { |word| word.last.score }
 =end
-  Config.load
+  Configutation.load
   Thread.abort_on_exception = true
   ScrabbleServer.new(configatron.port).run
 

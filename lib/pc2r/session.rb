@@ -30,7 +30,7 @@ module Pc2r
       @loop = Thread.new { loop_forever }
     end
 
-    def finish
+    def stop
       json = {}
       @tours.select { |tour| !tour.word.empty? }.each do |tour|
         win, word = tour.winner
@@ -100,7 +100,7 @@ module Pc2r
 
       end
       # fin de session
-      finish
+      stop
       Concurrent::ScheduledTask.execute(configatron.inter_session_time) do
         start false
       end
@@ -113,7 +113,6 @@ module Pc2r
       Concurrent::TimerTask.new(execution_interval: 1, run_now: true) do |task|
         synchronize {
           @time = time
-          pp "debut #{@phase} -> #{@time.divmod(60)}"
           time -= 1
           if @time <= 0
             block.call
@@ -126,12 +125,11 @@ module Pc2r
 
     # @param time [Integer]
     def recherche(time, &block)
+      @to_soumission = false
       Concurrent::TimerTask.new(execution_interval: 1, run_now: true) do |task|
         synchronize {
-          @to_soumission = false
           @phase = :REC
           @time = time
-          pp "recherche #{@phase} -> #{@time.divmod(60)}"
           time -= 1
           if @time <= 0
             @phase = :SOU
@@ -147,7 +145,6 @@ module Pc2r
         synchronize {
           @phase = :SOU
           @time = time
-          pp "soumission #{@phase} -> #{@time.divmod(60)}"
           time -= 1
           if @time <= 0
             @phase = :RES
@@ -164,10 +161,10 @@ module Pc2r
           @phase = :RES
           @time = time
           time -= 1
-          pp "resultat #{@phase} -> #{@time.divmod(60)}"
           if @time == configatron.res # first tick
             pp "cond #{@time == configatron.res}"
             vainqueur, mot = @tour.winner
+            pp "resultat >> #{vainqueur} #{mot}"
             @grid.set! @tour.placement[vainqueur]
             Player.find(vainqueur).score += mot.score
             Player.broadcast("BILAN/#{mot}/#{vainqueur}/#{Player.scores}/")
@@ -179,7 +176,8 @@ module Pc2r
         }
       end
     end
-
+    # @param placement [String]
+    # @param player [Player]
     def process_find_request(placement, player)
       raise 'POS disposition des lettres invalide' unless @grid.valid? placement
       word = @grid.extract_word placement
@@ -187,6 +185,7 @@ module Pc2r
       used_letters = @grid.letters_used placement
       raise "POS le mot <#{word}> doit etre composé avec les lettres suivantes #{@tour.tirage.inspect}" unless used_letters.all? { |l| @tour.tirage.include? l.to_sym }
       if @tour.word[player.name].nil? || (word.score > @tour.word[player.name].score)
+        best_word_extension(player,word)
         @tour.word[player.name] = word
         @tour.placement[player.name] = placement
       else
@@ -199,6 +198,23 @@ module Pc2r
         @tasks[:REC].kill
       elsif @tasks[:SOU].running?
         player.puts 'SVALIDE/'
+      end
+    end
+
+    # @param me [Player]
+    # @param word [String]
+    def best_word_extension(me,word)
+      winner, best_word = @tour.winner
+      begin
+      if best_word && Player.find(winner)
+        if word.score > best_word.score && Player.find(winner).name != me.name
+          Player.find(winner).puts 'MEILLEUR/0/'
+          me.puts 'MEILLEUR/1/'
+        end
+      else
+        me.puts 'MEILLEUR/1/'
+      end
+      rescue
       end
     end
   end

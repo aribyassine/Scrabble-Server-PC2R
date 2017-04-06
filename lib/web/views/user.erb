@@ -1,1 +1,25 @@
-<%= name %>
+<div class="page-header">
+  <h2><%= name %></h2>
+</div>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Date & Time</th>
+      <th>Score</th>
+      <th>Words</th>
+    </tr>
+    </thead>
+    <% stat.each_with_index do |game, index|  %>
+        <tr>
+          <td><%= index %></td>
+          <td><a href="<%=url('session/')+game[:id].to_s %>"><%= game[:date] %></a></td>
+          <td><%= game['score'] %></td>
+          <td>
+            <small><%= game['words'].join(', ') %></small>
+          </td>
+        </tr>
+    <% end %>
+  </table>
+</div>
