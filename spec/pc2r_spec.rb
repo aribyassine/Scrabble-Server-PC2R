@@ -3,6 +3,7 @@ require 'spec_helper'
 require 'pp'
 require_relative '../lib/pc2r/scrabble_server'
 require_relative '../lib/pc2r/configutation'
+require_relative '../lib/pc2r/version'
 
 RSpec.describe Pc2r do
   Pc2r::Configutation.load

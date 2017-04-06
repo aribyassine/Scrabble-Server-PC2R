@@ -1,6 +1,6 @@
 port: 2017
 
-timres:
+timers:
   debut: 20
   recherche: 300
   soumission: 120
@@ -9,15 +9,17 @@ timres:
 
 web:
   dir: lib/web/scores
+  bind: 0.0.0.0
+  port: 8000
 
-dictuonary:
+dictuonary:rrrrrub
   file: assets/ods.txt
   wiktionary: false
 
 game:
   grid:
    size: 15
-  letters:
+  scrabble:
     score: {
       E: 1, A: 1, I: 1, N: 1, O: 1, R: 1, S: 1, T: 1, U: 1, L: 1,
       D: 2, M: 2, G: 2,

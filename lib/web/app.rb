@@ -3,9 +3,12 @@ require 'json'
 require_relative '../pc2r/configutation'
 Pc2r::Configutation.load
 
+set :bind, configatron.web_bind
+set :port, configatron.web_port
+
 get '/' do
   best_scores = []
-  parse_json(configatron.web).each_pair do |date, session|
+  parse_json(configatron.web_dir).each_pair do |date, session|
     best = {}
     session.each_pair do |user_name, game|
       best = {
@@ -20,7 +23,7 @@ end
 
 get '/user/:name' do |name|
   games = []
-  parse_json(configatron.web).each_pair do |date, session|
+  parse_json(configatron.web_dir).each_pair do |date, session|
     if session[name]
       session[name][:date] = date
       session[name][:id] = session[:id]
@@ -31,7 +34,7 @@ get '/user/:name' do |name|
 end
 
 get '/session/:id' do |id|
-  json = JSON.parse(File.readlines(configatron.web+"/#{id}.json").first)
+  json = JSON.parse(File.readlines(configatron.web_dir+"/#{id}.json").first)
   erb :session, locals: {json: json, time: id}
 end
 

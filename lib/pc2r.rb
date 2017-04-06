@@ -19,6 +19,7 @@ module Pc2r
   pp h.max_by { |word| word.last.score }
 =end
   Configutation.load
+  pp 'hello'.score()
   Thread.abort_on_exception = true
   ScrabbleServer.new(configatron.port).run
 

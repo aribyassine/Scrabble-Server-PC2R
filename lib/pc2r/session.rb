@@ -41,7 +41,7 @@ module Pc2r
           json[win] = {words: [word], score: word.score}
         end
       end
-      File.open(configatron.web + "/#{Time.now.to_i}.json", 'w+') do |file|
+      File.open(configatron.web_dir + "/#{Time.now.to_i}.json", 'w+') do |file|
         file.puts(json.to_json)
       end unless json.empty?
       @tasks.values.each { |task| task.kill } if @tasks
