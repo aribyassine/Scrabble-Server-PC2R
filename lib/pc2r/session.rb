@@ -43,7 +43,7 @@ module Pc2r
       end
       File.open(configatron.web + "/#{Time.now.to_i}.json", 'w+') do |file|
         file.puts(json.to_json)
-      end
+      end unless json.empty?
       @tasks.values.each { |task| task.kill } if @tasks
       @loop.kill if @loop && Player.count == 0
     end

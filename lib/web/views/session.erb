@@ -1,0 +1,24 @@
+<h2><%= Time.at(time.to_i).ctime %></h2>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>User Name</th>
+      <th>Score</th>
+      <th>Words</th>
+    </tr>
+    </thead>
+    <% index = 0 %>
+    <% json.each_pair do |user_name, game| %>
+        <tr>
+          <td><%= index += 1 %></td>
+          <td><a href="<%=url('user/')+user_name %>"><%= user_name %></a></td>
+          <td><%= game['score'] %></td>
+          <td>
+            <small><%= game['words'].join(', ') %></small>
+          </td>
+        </tr>
+    <% end %>
+  </table>
+</div>

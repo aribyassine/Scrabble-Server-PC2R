@@ -1,0 +1,25 @@
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Date & Time</th>
+      <th>Winner's Name</th>
+      <th>Score</th>
+      <th>Words</th>
+    </tr>
+    </thead>
+
+    <% best_scores.each_with_index do |line, index| %>
+        <tr>
+          <td><%= index %></td>
+          <td><a href="session/<%= line[:id] %>"><%= line[:date] %></a></td>
+          <td><a href="user/<%= line[:name] %>"><%= line[:name] %></a></td>
+          <td><%= line[:score] %></td>
+          <td>
+            <small><%= line[:words].join(', ') %></small>
+          </td>
+        </tr>
+    <% end %>
+  </table>
+</div>
