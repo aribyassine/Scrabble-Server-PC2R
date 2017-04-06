@@ -34,7 +34,7 @@ class String
   # @return [Set]
   def self.dictuonary
     if dict.empty?
-      File.open(configatron.dictuonary) do |file|
+      File.open(configatron.dict) do |file|
         file.each do |line|
           dict << line.chomp
         end

@@ -5,6 +5,7 @@ require_relative '../lib/pc2r/configutation'
 
 describe 'Grid' do
 
+
   Pc2r::Configutation.load
   grid = Pc2r::Grid.new
 

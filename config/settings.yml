@@ -12,8 +12,8 @@ web:
   bind: 0.0.0.0
   port: 8000
 
-dictuonary:rrrrrub
-  file: assets/ods.txt
+dictuonary:
+  file: /assets/ods.txt
   wiktionary: false
 
 game:

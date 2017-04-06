@@ -4,11 +4,11 @@ require 'config'
 module Pc2r
   class Configutation
     def self.load
-      Config.load_and_set_settings(File.expand_path('../../config/settings.yml', __dir__))
+      Config.load_and_set_settings(File.expand_path('../../../config/settings.yml', __FILE__))
 
-      configatron.dictuonary = File.expand_path("../../#{Settings.dictuonary.file||'assets/ods.txt'}", __dir__)
+      configatron.dict = File.expand_path("../../../#{Settings.dictuonary.file ||'/assets/ods.txt'}", __FILE__)
       configatron.wiktionary = Settings.dictuonary.wiktionary || false
-      configatron.web_dir = File.expand_path("../../#{Settings.web.dir||'/lib/web/scores'}", __dir__)
+      configatron.web_dir = File.expand_path("../../../#{Settings.web.dir||'/lib/web/scores'}", __FILE__)
       configatron.web_bind = Settings.web.bind || '0.0.0.0'
       configatron.web_port = Settings.web.port || 8000
 
