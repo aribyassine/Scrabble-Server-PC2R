@@ -162,9 +162,7 @@ module Pc2r
           @time = time
           time -= 1
           if @time == configatron.res # first tick
-            pp "cond #{@time == configatron.res}"
             vainqueur, mot = @tour.winner
-            pp "resultat >> #{vainqueur} #{mot}"
             @grid.set! @tour.placement[vainqueur]
             Player.find(vainqueur).score += mot.score
             Player.broadcast("BILAN/#{mot}/#{vainqueur}/#{Player.scores}/")
